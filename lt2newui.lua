@@ -107,48 +107,15 @@ function Library:CreateMain(Options)
 		ZIndex = 10,
 	})
 
-local gradientColors = {
-    Color3.fromRGB(255, 0, 0), -- Red
-    Color3.fromRGB(255, 165, 0), -- Orange
-    Color3.fromRGB(255, 255, 0), -- Yellow
-    Color3.fromRGB(0, 255, 0), -- Green
-    Color3.fromRGB(0, 127, 255), -- Blue
-    Color3.fromRGB(139, 0, 255) -- Purple
-}
-
-local gradientLength = #gradientColors
-
-local Main = game:GetService("ReplicatedStorage").Main
-local Library = require(Main.Library)
-
-local gradientKeypoints = {}
-
--- Generate color sequence keypoints for the gradient
-for i, color in ipairs(gradientColors) do
-    local keypoint = ColorSequenceKeypoint.new((i-1)/(gradientLength-1), color)
-    table.insert(gradientKeypoints, keypoint)
-end
-
 Main.Uplinegradient = Library:Create("UIGradient", {
-    Color = ColorSequence.new(gradientKeypoints),
-    Rotation = 90,
-    Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(0.5, 1),
-        NumberSequenceKeypoint.new(1, 0)
-    }),
-    Offset = Vector2.new(-1, 0),
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 183, 183)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0, 248, 248)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(125, 92, 164)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 0))
+    }
 })
-
--- Animate the gradient
-local animationDuration = 10 -- in seconds
-while true do
-    Main.Uplinegradient.Offset = Vector2.new(-1, 0)
-    Main.Uplinegradient:TweenPosition(UDim2.new(2, 0, 0, 0), "InOut", "Linear", animationDuration)
-    wait(animationDuration)
-end
-
-
 
 	Main.Sidebar = Library:Create("ScrollingFrame", {
 		Name = "Sidebar",
