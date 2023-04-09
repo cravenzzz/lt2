@@ -107,27 +107,47 @@ function Library:CreateMain(Options)
 		ZIndex = 10,
 	})
 
--- Define the colors to be used in the gradient
-local colors = {
-    Color3.fromRGB(255, 0, 0),   -- red
-    Color3.fromRGB(0, 255, 0),   -- green
-    Color3.fromRGB(0, 0, 255),   -- blue
+local gradientColors = {
+    Color3.fromRGB(255, 0, 0), -- Red
+    Color3.fromRGB(255, 165, 0), -- Orange
+    Color3.fromRGB(255, 255, 0), -- Yellow
+    Color3.fromRGB(0, 255, 0), -- Green
+    Color3.fromRGB(0, 127, 255), -- Blue
+    Color3.fromRGB(139, 0, 255) -- Purple
 }
 
--- Define the keypoint positions for the gradient
-local keypoints = {
-    ColorSequenceKeypoint.new(0, colors[1]),
-    ColorSequenceKeypoint.new(0.5, colors[2]),
-    ColorSequenceKeypoint.new(1, colors[3]),
-}
+local gradientLength = #gradientColors
 
--- Create the gradient and set its properties
-local gradient = Instance.new("UIGradient")
-gradient.Color = ColorSequence.new(keypoints)
-gradient.Rotation = 90  -- rotate the gradient to move it from left to right
+local Main = game:GetService("ReplicatedStorage").Main
+local Library = require(Main.Library)
 
--- Apply the gradient to the target object
-Main.Uplinegradient = gradient
+local gradientKeypoints = {}
+
+-- Generate color sequence keypoints for the gradient
+for i, color in ipairs(gradientColors) do
+    local keypoint = ColorSequenceKeypoint.new((i-1)/(gradientLength-1), color)
+    table.insert(gradientKeypoints, keypoint)
+end
+
+Main.Uplinegradient = Library:Create("UIGradient", {
+    Color = ColorSequence.new(gradientKeypoints),
+    Rotation = 90,
+    Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.5, 1),
+        NumberSequenceKeypoint.new(1, 0)
+    }),
+    Offset = Vector2.new(-1, 0),
+})
+
+-- Animate the gradient
+local animationDuration = 10 -- in seconds
+while true do
+    Main.Uplinegradient.Offset = Vector2.new(-1, 0)
+    Main.Uplinegradient:TweenPosition(UDim2.new(2, 0, 0, 0), "InOut", "Linear", animationDuration)
+    wait(animationDuration)
+end
+
 
 
 	Main.Sidebar = Library:Create("ScrollingFrame", {
